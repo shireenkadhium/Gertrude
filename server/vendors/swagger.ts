@@ -18,7 +18,6 @@ export function setupSwagger(app) {
     .setDescription('Gertrude API Documentation')
     .setVersion('1.0')
     .addBearerAuth({ type: 'http', in: 'header' })
-    .addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header' }, 'Api-Key')
     .build();
 
   const document = SwaggerModule.createDocument(app, documentOptions);

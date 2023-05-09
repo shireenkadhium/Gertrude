@@ -12,6 +12,16 @@ export type Configuration = {
       synchronize: boolean;
     };
   };
+  jwt: {
+    access: {
+      secret: string;
+      expiresIn: string;
+    };
+    refresh: {
+      secret: string;
+      expiresIn: string;
+    };
+  };
   swagger: {
     user: string;
     password: string;

@@ -16,7 +16,6 @@ async function bootstrap() {
 }
 
 function configureApp(app) {
-  app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

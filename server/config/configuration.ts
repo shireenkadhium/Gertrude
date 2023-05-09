@@ -14,6 +14,16 @@ export default (): Configuration => ({
       synchronize: process.env.POSTGRES_SYNCHRONIZE === 'true',
     },
   },
+  jwt: {
+    access: {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
+    },
+    refresh: {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+    },
+  },
   swagger: {
     user: process.env.SWAGGER_USER,
     password: process.env.SWAGGER_PASSWORD,
