@@ -1,8 +1,15 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignInResponseDto } from './dto/sign-in.response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -11,10 +18,9 @@ export class AuthController {
 
   @Post('sign-in')
   @ApiOperation({ summary: 'Sign in' })
-  @ApiForbiddenResponse({ description: 'Forbidden' })
-  @HttpCode(HttpStatus.OK)
-  signIn(@Body() signInDto: SignInDto) {
+  signIn(@Body() signInDto: SignInDto): Promise<SignInResponseDto> {
     const { username, password } = signInDto;
+    console.log('signInDto', signInDto);
     return this.authService.signIn(username, password);
   }
 }
