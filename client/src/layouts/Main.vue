@@ -1,5 +1,21 @@
 <script lang="ts" setup>
-import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
+import { Document, Lock, ChatSquare, User, Setting } from '@element-plus/icons-vue'
+import { authStore } from '@/store'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
+const REFRESH_TOKEN_NAMESPACE = 'gertrude/accessToken'
+
+const logout = () => {
+  authStore.accessToken = ''
+  authStore.refreshToken = ''
+  authStore.isAuthenticated = false
+  localStorage.removeItem(ACCESS_TOKEN_NAMESPACE)
+  localStorage.removeItem(REFRESH_TOKEN_NAMESPACE)
+  router.replace('/login')
+}
 </script>
 
 <template>
@@ -8,14 +24,26 @@ import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
       <h2 class="logo">Gertrude</h2>
       <el-menu default-active="1" class="el-menu-vertical-demo" router>
         <el-menu-item index="1" route="chat">
-          <el-icon><document /></el-icon>
+          <el-icon><chat-square /></el-icon>
           <span>Chat</span>
         </el-menu-item>
-        <el-menu-item index="2" route="admin">
-          <el-icon><icon-menu /></el-icon>
-          <span>Admin Panel</span>
+        <el-menu-item index="2" route="documents">
+          <el-icon><document /></el-icon>
+          <span>Documents</span>
+        </el-menu-item>
+        <el-menu-item index="3" route="users">
+          <el-icon><user /></el-icon>
+          <span>Users</span>
+        </el-menu-item>
+        <el-menu-item index="4" route="settings">
+          <el-icon><setting /></el-icon>
+          <span>Settings</span>
         </el-menu-item>
       </el-menu>
+      <el-button type="text" class="logout-button" @click="logout">
+        <el-icon><lock /></el-icon>
+        <span>Logout</span>
+      </el-button>
     </el-aside>
     <el-main>
       <router-view></router-view>
@@ -33,6 +61,8 @@ import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
 }
 .app-layout .el-aside {
   color: #c9c4bd;
+  display: flex;
+  flex-direction: column;
 }
 .app-layout .el-menu {
   border-right: none;
@@ -60,5 +90,17 @@ import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
   text-transform: uppercase;
   letter-spacing: 2px;
   user-select: none;
+}
+
+.logout-button {
+  margin: auto 20px 20px;
+  font-size: 18px;
+  line-height: 24px;
+  color: #fff;
+  padding: 0;
+}
+
+.logout-button span {
+  font-size: 14px;
 }
 </style>

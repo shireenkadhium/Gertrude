@@ -3,12 +3,15 @@ import api from '@/services/api'
 import { authStore } from '@/store'
 import { ElNotification } from 'element-plus'
 
+const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
+const REFRESH_TOKEN_NAMESPACE = 'gertrude/accessToken'
+
 export default {
   data() {
     return {
       form: {
-        email: '',
-        password: ''
+        email: 's.rykov@mobidev.biz',
+        password: 'Admin@123'
       },
       emailRules: [
         { required: true, message: 'Please enter your email', trigger: 'blur' },
@@ -26,13 +29,15 @@ export default {
         if (valid) {
           const { email: username, password } = this.form
           try {
-            const { accessToken } = await api.login({ username, password })
-            if (accessToken) {
-              authStore.accessToken = accessToken
-              authStore.isAuthenticated = true
-            }
+            const { accessToken, refreshToken } = await api.login({ username, password })
+            authStore.accessToken = accessToken
+            authStore.refreshToken = refreshToken
+            authStore.isAuthenticated = true
+            localStorage.setItem(ACCESS_TOKEN_NAMESPACE, accessToken)
+            localStorage.setItem(REFRESH_TOKEN_NAMESPACE, refreshToken)
             this.$router.replace('/chat')
           } catch (err) {
+            console.log(err)
             ElNotification({
               title: 'Error',
               message: 'Wrong Credentials',

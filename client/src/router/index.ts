@@ -31,12 +31,30 @@ const router = createRouter({
           children: []
         },
         {
-          path: '/admin',
-          name: 'admin',
+          path: '/documents',
+          name: 'documents',
           meta: {
             isAdminRoute: true
           },
-          component: () => import('../views/AdminPanel.vue'),
+          component: () => import('../views/UploadDocuments.vue'),
+          children: []
+        },
+        {
+          path: '/users',
+          name: 'users',
+          meta: {
+            isAdminRoute: true
+          },
+          component: () => import('../views/Users.vue'),
+          children: []
+        },
+        {
+          path: '/settings',
+          name: 'settings',
+          meta: {
+            isAdminRoute: true
+          },
+          component: () => import('../views/Settings.vue'),
           children: []
         },
         {
@@ -50,12 +68,13 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const { isPublic, admin } = to.meta
-  const { acessToken, isAuthenticated } = authStore
+  const { isAuthenticated } = authStore
 
-  console.log(acessToken, isAuthenticated)
+  if (isPublic && isAuthenticated) {
+    return { name: 'chat' }
+  }
 
   if (!isPublic && !isAuthenticated) {
-    console.log('redirecting to login')
     return { name: 'login' }
   }
 })

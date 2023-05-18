@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 
 import { PASSWORD_SALT_ROUNDS } from '../../auth/auth.constants';

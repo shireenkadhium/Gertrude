@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Llama-index Demo</h1>
     <div class="form-wrapper">
       <div class="upload-form" v-if="!filesUploaded">
         <h2>Step 1: Select files</h2>
@@ -137,9 +136,9 @@ export default {
 .form-wrapper {
   width: 400px;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #363636;
   border-radius: 5px;
-  margin: 0 0 20px;
+  margin: 0 auto 20px;
 }
 
 .answer {
