@@ -1,8 +1,11 @@
 <script>
+import api from '@/services/api'
+
 export default {
   data() {
     return {
       messages: [],
+      generating: false,
       newMessage: {
         content: '',
         type: 'outgoing'
@@ -10,10 +13,21 @@ export default {
     }
   },
   methods: {
-    sendMessage() {
+    async sendMessage() {
       if (this.newMessage.content) {
+        const question = this.newMessage.content
         this.messages.push({ content: this.newMessage.content, type: 'outgoing' })
         this.newMessage.content = ''
+        try {
+          this.generating = true
+          await api.getAnswer(question).then((res) => {
+            this.messages.push({ content: res.answer, type: 'incoming' })
+          })
+        } catch (error) {
+          console.log(error)
+        } finally {
+          this.generating = false
+        }
       }
     },
     submitMessage(event) {
@@ -27,7 +41,7 @@ export default {
 
 <template>
   <div class="chat-page">
-    <div class="messages">
+    <div class="messages" v-loading="generating">
       <ul>
         <li v-for="(message, index) in messages" :key="index" :class="message.type">
           <span>{{ message.content }}</span>
@@ -49,10 +63,11 @@ export default {
             resize="none"
             size="large"
             placeholder="Type your message..."
+            class="message-input"
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" native-type="submit">Send</el-button>
+          <el-button type="primary" native-type="submit" :disabled="generating">Send</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -81,6 +96,7 @@ export default {
 .messages li {
   margin-bottom: 10px;
   padding: 5px 10px;
+  max-width: 75%;
 }
 
 .messages li span {
@@ -89,7 +105,8 @@ export default {
   display: inline-block;
 }
 
-.messages li.incoming span {
+.messages li.incoming {
+  margin-right: auto;
   border-radius: 5px;
   text-align: left;
 }
@@ -101,6 +118,7 @@ export default {
 .messages li.outgoing {
   border-radius: 5px;
   text-align: right;
+  margin-left: auto;
 }
 
 .messages li.outgoing span {
@@ -137,12 +155,12 @@ export default {
   flex: 1;
 }
 
-.form .el-textarea .el-textarea__inner {
+.el-textarea__inner {
   min-height: 32px;
   max-height: 175px;
   border: 1px solid var(--el-input-focus-border-color);
   box-shadow: none;
-  order-radius: 5px;
+  border-radius: 5px;
 }
 
 .el-input {

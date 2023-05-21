@@ -27,3 +27,11 @@ a,
     place-items: center;
   }
 }
+
+.el-textarea__inner {
+  min-height: 32px;
+  max-height: 175px;
+  border: 1px solid var(--el-input-focus-border-color);
+  box-shadow: none;
+  border-radius: 5px;
+}

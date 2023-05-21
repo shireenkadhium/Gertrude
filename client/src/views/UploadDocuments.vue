@@ -2,7 +2,7 @@
   <div>
     <div class="form-wrapper">
       <div class="upload-form" v-if="!filesUploaded">
-        <h2>Step 1: Select files</h2>
+        <h2>Select & Upload files to create a chat</h2>
         <div>
           <el-upload
             class="upload-demo"
@@ -35,15 +35,6 @@
           {{ filesUploading ? 'Uploading and creating index..' : 'Upload Files' }}
         </el-button>
       </div>
-      <div v-else class="query-form">
-        <h2>Step 2: Query Index</h2>
-        <el-form label-position="top">
-          <el-form-item label="What are you interested in?">
-            <el-input type="textarea" v-model="text"></el-input>
-          </el-form-item>
-        </el-form>
-        <el-button size="large" type="primary" @click="submitForm">Ask</el-button>
-      </div>
     </div>
     <div class="answer" v-if="answer">
       <h2>Answer</h2>
@@ -54,12 +45,12 @@
 
 <script>
 import axios from 'axios'
+import api from '@/services/api'
 
 export default {
   name: 'LlamaIndex',
   data() {
     return {
-      filesUploaded: false,
       filesUploading: false,
       indexQuerying: false,
       fileList: [],
@@ -87,35 +78,12 @@ export default {
       })
 
       try {
-        await axios.post('http://localhost:3000/llama-index/create', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
+        await api.createDocumentsIndex(formData)
         this.fileList = []
-        this.filesUploaded = true
       } catch (error) {
         console.log(error)
       } finally {
         this.filesUploading = false
-      }
-    },
-
-    async submitForm() {
-      this.indexQuerying = true
-      this.answer = ''
-      try {
-        const res = await axios.get('http://localhost:3000/llama-index/query', {
-          params: {
-            prompt: this.text
-          }
-        })
-
-        this.answer = res.data.answer
-      } catch (err) {
-        console.log(err)
-      } finally {
-        this.indexQuerying = false
       }
     }
   }
@@ -129,22 +97,18 @@ export default {
   flex-direction: column;
 }
 
+h2 {
+  margin: 0 0 20px;
+}
+
 .upload-btn {
   margin-top: 20px;
 }
 
 .form-wrapper {
-  width: 400px;
+  max-width: 800px;
   padding: 20px;
-  border: 1px solid #363636;
   border-radius: 5px;
   margin: 0 auto 20px;
-}
-
-.answer {
-  width: 400px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 </style>
