@@ -19,4 +19,7 @@ export class SignInResponseDto {
 
   @Expose()
   refreshToken: string;
+
+  @Expose()
+  roles: string[];
 }

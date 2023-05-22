@@ -1,8 +1,11 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 
 import configuration from '../../config/configuration';
+import { RolesGuard } from '../users/roles/roles.guard';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Module({
   imports: [
@@ -25,6 +28,16 @@ import configuration from '../../config/configuration';
       },
       inject: [ConfigService],
     }),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class CoreModule {}

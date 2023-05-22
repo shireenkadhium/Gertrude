@@ -14,7 +14,9 @@ import { IndexesService } from './indexes.service';
 import { CreateIndexDto } from './dto/create-index.dto';
 import { UpdateIndexDto } from './dto/update-index.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Indexes')
 @Controller('indexes')
 export class IndexesController {
   constructor(private readonly indexesService: IndexesService) {}
@@ -35,20 +37,20 @@ export class IndexesController {
   //   return this.indexesService.findAll();
   // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.indexesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIndexDto: UpdateIndexDto) {
-    return this.indexesService.update(+id, updateIndexDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.indexesService.remove(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.indexesService.findOne(+id);
+  // }
+  //
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateIndexDto: UpdateIndexDto) {
+  //   return this.indexesService.update(+id, updateIndexDto);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.indexesService.remove(+id);
+  // }
 
   @Get()
   async query(@Query() query): Promise<{ message: string; answer: string }> {

@@ -17,7 +17,7 @@ export function setupSwagger(app) {
     .setTitle('Gertrude')
     .setDescription('Gertrude API Documentation')
     .setVersion('1.0')
-    .addBearerAuth({ type: 'http', in: 'header' })
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, documentOptions);

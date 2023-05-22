@@ -16,6 +16,8 @@ const logout = () => {
   localStorage.removeItem(REFRESH_TOKEN_NAMESPACE)
   router.replace('/login')
 }
+
+const isAdmin = authStore.roles.includes('admin')
 </script>
 
 <template>
@@ -27,18 +29,20 @@ const logout = () => {
           <el-icon><chat-square /></el-icon>
           <span>Chat</span>
         </el-menu-item>
-        <el-menu-item index="2" route="documents">
-          <el-icon><document /></el-icon>
-          <span>Documents</span>
-        </el-menu-item>
-        <el-menu-item index="3" route="users">
-          <el-icon><user /></el-icon>
-          <span>Users</span>
-        </el-menu-item>
-        <el-menu-item index="4" route="settings">
-          <el-icon><setting /></el-icon>
-          <span>Settings</span>
-        </el-menu-item>
+        <div v-if="isAdmin">
+          <el-menu-item index="2" route="documents">
+            <el-icon><document /></el-icon>
+            <span>Document</span>
+          </el-menu-item>
+          <el-menu-item index="3" route="users">
+            <el-icon><user /></el-icon>
+            <span>Users</span>
+          </el-menu-item>
+          <el-menu-item index="4" route="settings">
+            <el-icon><setting /></el-icon>
+            <span>Settings</span>
+          </el-menu-item>
+        </div>
       </el-menu>
       <el-button type="text" class="logout-button" @click="logout">
         <el-icon><lock /></el-icon>

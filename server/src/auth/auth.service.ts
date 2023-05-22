@@ -20,8 +20,13 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const jwtPayload = { username: user.email, id: user.id };
+    const jwtPayload = { username: user.email, id: user.id, roles: user.roles };
     const tokens = await this.generateTokens(jwtPayload);
+
+    user.accessToken = tokens.accessToken;
+    user.refreshToken = tokens.refreshToken;
+
+    await this.usersService.update(user.id, user);
 
     return plainToInstance(SignInResponseDto, { ...user, ...tokens });
   }

@@ -18,6 +18,10 @@ export class UsersService {
     return plainToInstance(CreateUserResponseDto, user);
   }
 
+  update(id: number, user: User) {
+    return this.usersRepository.update(id, user);
+  }
+
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }

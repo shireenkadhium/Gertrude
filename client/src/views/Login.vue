@@ -4,7 +4,8 @@ import { authStore } from '@/store'
 import { ElNotification } from 'element-plus'
 
 const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
-const REFRESH_TOKEN_NAMESPACE = 'gertrude/accessToken'
+const REFRESH_TOKEN_NAMESPACE = 'gertrude/refreshToken'
+const ROLES_NAMESPACE = 'gertrude/roles'
 
 export default {
   data() {
@@ -29,12 +30,14 @@ export default {
         if (valid) {
           const { email: username, password } = this.form
           try {
-            const { accessToken, refreshToken } = await api.login({ username, password })
+            const { accessToken, refreshToken, roles } = await api.login({ username, password })
             authStore.accessToken = accessToken
             authStore.refreshToken = refreshToken
+            authStore.roles = roles
             authStore.isAuthenticated = true
             localStorage.setItem(ACCESS_TOKEN_NAMESPACE, accessToken)
             localStorage.setItem(REFRESH_TOKEN_NAMESPACE, refreshToken)
+            localStorage.setItem(ROLES_NAMESPACE, JSON.stringify(roles))
             this.$router.replace('/chat')
           } catch (err) {
             console.log(err)

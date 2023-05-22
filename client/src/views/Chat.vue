@@ -39,9 +39,9 @@ export default {
 }
 </script>
 
-<template>
+<template v-loading="generating">
   <div class="chat-page">
-    <div class="messages" v-loading="generating">
+    <div class="messages">
       <ul>
         <li v-for="(message, index) in messages" :key="index" :class="message.type">
           <span>{{ message.content }}</span>
