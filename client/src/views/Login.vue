@@ -113,7 +113,7 @@ export default {
 
 .logo {
   margin: 10px;
-  color: #c9c4bd;
+  color: #fff;
   font-size: 20px;
   font-weight: bold;
   text-align: center;

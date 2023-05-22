@@ -1,23 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { UpdateIndexDto } from './dto/update-index.dto';
 import { spawn } from 'child_process';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { SettingsService } from '../settings/settings.service';
+import { ERROR_MESSAGES } from './indexes.constants';
 
 @Injectable()
 export class IndexesService {
+  constructor(private readonly settingsService: SettingsService) {}
   saveDocuments(files: Array<Express.Multer.File>) {
     const directoryPath = 'assets/temp';
     this.removeExistingFiles(directoryPath);
     this.saveFiles(directoryPath, files);
   }
-  create(files: Array<Express.Multer.File>): Promise<string> {
+  async create(files: Array<Express.Multer.File>): Promise<string> {
     this.saveDocuments(files);
+    const apiKeySetting = await this.settingsService.getApiKey();
+    const OPENAI_API_KEY = apiKeySetting?.value;
 
-    // const OPENAI_API_KEY = this.configService.get('OPENAI_API_KEY');
-    const OPENAI_API_KEY =
-      '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';
+    if (!OPENAI_API_KEY) {
+      throw new ForbiddenException(ERROR_MESSAGES.INVALID_OPENAPI_KEY);
+    }
 
     return new Promise((resolve, reject) => {
       const scriptPath = path.resolve(
@@ -48,10 +57,13 @@ export class IndexesService {
     });
   }
 
-  query(prompt: string): Promise<string> {
-    console.log(prompt);
-    const OPENAI_API_KEY =
-      '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';
+  async query(prompt: string): Promise<string> {
+    const apiKeySetting = await this.settingsService.getApiKey();
+    const OPENAI_API_KEY = apiKeySetting?.value;
+
+    if (!OPENAI_API_KEY) {
+      throw new ForbiddenException(ERROR_MESSAGES.INVALID_OPENAPI_KEY);
+    }
 
     return new Promise((resolve, reject) => {
       const scriptPath = path.resolve(

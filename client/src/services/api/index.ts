@@ -31,6 +31,15 @@ const api: API = {
       }
     })
   },
+  setApiKey: (body) => {
+    return httpClient.post('/settings/openapi-key', body)
+  },
+  getApiKey: () => {
+    return httpClient.get('/settings/openapi-key')
+  },
+  deleteApiKey: () => {
+    return httpClient.delete('/settings/openapi-key')
+  },
   getUsers: () => {
     return httpClient.get('/users')
   },

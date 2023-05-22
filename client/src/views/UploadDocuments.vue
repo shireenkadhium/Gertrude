@@ -99,6 +99,7 @@ export default {
 
 h2 {
   margin: 0 0 20px;
+  color: #fff;
 }
 
 .upload-btn {

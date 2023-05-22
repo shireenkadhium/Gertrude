@@ -63,6 +63,7 @@ const logout = () => {
   color: #c9c4bd;
   display: flex;
   flex-direction: column;
+  background: #082645;
 }
 .app-layout .el-menu {
   border-right: none;
@@ -83,7 +84,7 @@ const logout = () => {
 
 .app-layout .logo {
   margin: 20px;
-  color: #c9c4bd;
+  color: #fff;
   font-size: 20px;
   font-weight: bold;
   text-align: center;

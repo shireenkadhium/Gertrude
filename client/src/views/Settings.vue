@@ -1,26 +1,46 @@
 <script>
 import { Delete } from '@element-plus/icons-vue'
+import api from '@/services/api'
 export default {
   components: {
     Delete
   },
   data() {
     return {
-      currentKey: '213123 123 13 123 ',
+      currentKey: '',
       formData: {
         apiKey: ''
       }
     }
   },
+  mounted() {
+    this.getData()
+  },
   methods: {
-    submitForm() {
+    async submitForm() {
       this.currentKey = this.formData.apiKey
       this.formData = {
         apiKey: ''
       }
+      await api.setApiKey({ value: this.currentKey })
     },
-    deleteExistingKey() {
-      this.currentKey = ''
+    async getData() {
+      try {
+        const { value } = await api.getApiKey()
+        this.currentKey = value
+        this.formData.apiKey = value
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async deleteExistingKey() {
+      try {
+        await api.deleteApiKey()
+        this.currentKey = ''
+        this.formData.apiKey = ''
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
@@ -70,7 +90,7 @@ export default {
 }
 
 .existing-key {
-  max-width: 500px;
+  max-width: 700px;
   color: #fff;
   margin: auto;
 }
