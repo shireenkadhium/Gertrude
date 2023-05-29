@@ -1,110 +1,169 @@
 <template>
   <div>
-    <div class="section">
+    <div class="section" v-if="!createMode && !editMode">
       <h2>User List</h2>
       <el-table :data="users" style="width: 100%">
-        <el-table-column prop="name" label="Name"></el-table-column>
+        <el-table-column prop="firstName" label="First Name"></el-table-column>
+        <el-table-column prop="lastName" label="Last Name"></el-table-column>
         <el-table-column prop="email" label="Email"></el-table-column>
-        <el-table-column label="Actions">
+        <el-table-column label="Actions" width="170px">
           <template #default="scope">
             <el-button @click="editUser(scope.row)">Edit</el-button>
             <el-button type="danger" @click="deleteUser(scope.row)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <el-button class="button" type="primary" @click="createMode = true">Create User</el-button>
     </div>
-
-    <div class="section">
-      <h2>Create User</h2>
-      <el-form :model="newUser" @submit.native.prevent="createUser">
-        <el-form-item label="Name">
-          <el-input v-model="newUser.name" placeholder="Enter name"></el-input>
+    <div class="section create-users" v-if="createMode || editMode">
+      <h2>{{ createMode ? 'Create' : 'Update' }} User</h2>
+      <el-form
+        ref="userForm"
+        :model="userForm"
+        label-position="top"
+        @submit.native.prevent="handleSubmit"
+      >
+        <el-form-item label="Email" prop="email" :rules="emailRules">
+          <el-input v-model="userForm.email" placeholder="Enter email"></el-input>
         </el-form-item>
-        <el-form-item label="Email">
-          <el-input v-model="newUser.email" placeholder="Enter email"></el-input>
+        <el-form-item v-if="createMode" label="Password" prop="password" :rules="passwordRules">
+          <el-input v-model="userForm.password" placeholder="Enter password"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" native-type="submit">Create</el-button>
+        <el-form-item label="First Name" prop="firstName" :required="true">
+          <el-input v-model="userForm.firstName" placeholder="Enter name"></el-input>
+        </el-form-item>
+        <el-form-item label="Last Name" prop="lastName" :required="true">
+          <el-input v-model="userForm.lastName" placeholder="Enter name"></el-input>
+        </el-form-item>
+        <el-form-item class="button-holder">
+          <el-button native-type="button" @click="cancel">Cancel</el-button>
+          <el-button type="primary" native-type="submit">
+            {{ createMode ? 'Create' : 'Update' }}
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
-
-    <el-dialog :visible.sync="editDialogVisible">
-      <el-form :model="selectedUser" @submit.native.prevent="saveUser">
-        <el-form-item label="Name">
-          <el-input v-model="selectedUser.name" placeholder="Enter name"></el-input>
-        </el-form-item>
-        <el-form-item label="Email">
-          <el-input v-model="selectedUser.email" placeholder="Enter email"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" native-type="submit">Save</el-button>
-          <el-button type="danger" @click="deleteUser(selectedUser)">Delete</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import api from '@/services/api'
+import { ElNotification, ElMessageBox } from 'element-plus'
+
 export default {
   data() {
     return {
-      newUser: {
-        name: '',
-        email: ''
+      users: [],
+      userForm: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
       },
-      users: [
-        { id: 1, name: 'John Doe', email: 'john@example.com' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+      emailRules: [
+        { required: true, message: 'Please enter your email', trigger: 'blur' },
+        { type: 'email', message: 'Invalid email format', trigger: ['blur', 'change'] }
+      ],
+      passwordRules: [
+        { required: true, message: 'Please enter your password', trigger: 'blur' },
+        { min: 6, message: 'Password length should be at least 6 characters', trigger: 'blur' }
       ],
       editDialogVisible: false,
-      selectedUser: null
+      selectedUser: null,
+      createMode: false,
+      editMode: false
     }
   },
+  mounted() {
+    this.getUsers()
+  },
   methods: {
-    createUser() {
-      // Generate a unique ID for the new user
-      const newUserId = Math.max(...this.users.map((user) => user.id)) + 1
+    async getUsers() {
+      try {
+        this.users = await api.getUsers()
+      } catch (error) {
+        console.error(error)
+        ElNotification({
+          title: 'Error',
+          message: 'There was an error fetching users',
+          type: 'error'
+        })
+      }
+    },
+    cancel() {
+      this.createMode = false
+      this.editMode = false
+    },
+    async handleSubmit() {
+      this.$refs.userForm.validate(async (valid) => {
+        if (valid) {
+          if (this.createMode) {
+            const user = await api.createUser(this.userForm)
+            this.users.push(user)
+            this.createMode = false
+            ElNotification({
+              title: 'Success',
+              message: 'User created successfully',
+              type: 'success'
+            })
+          } else if (this.editMode) {
+            const userId = this.userForm.id
+            const user = await api.updateUser(userId, this.userForm)
+            const userIndex = this.users.findIndex((user) => user.id === userId)
+            if (userIndex > -1) {
+              // Update the user in the users array
+              Object.assign(this.users[userIndex], user)
+            }
+            this.editMode = false
+            ElNotification({
+              title: 'Success',
+              message: 'User updated successfully',
+              type: 'success'
+            })
+          }
 
-      // Add the new user to the users array
-      this.users.push({
-        id: newUserId,
-        name: this.newUser.name,
-        email: this.newUser.email
+          this.userForm.firstName = ''
+          this.userForm.lastName = ''
+          this.userForm.email = ''
+          this.userForm.password = ''
+        }
       })
-
-      // Reset the form
-      this.newUser.name = ''
-      this.newUser.email = ''
     },
     editUser(user) {
-      // Set the selected user for editing
-      this.selectedUser = Object.assign({}, user)
-
-      // Show the edit dialog
-      this.editDialogVisible = true
+      this.userForm = Object.assign({}, user)
+      this.editMode = true
     },
-    saveUser() {
-      // Find the index of the selected user in the users array
-      const userIndex = this.users.findIndex((user) => user.id === this.selectedUser.id)
-
-      if (userIndex > -1) {
-        // Update the user in the users array
-        this.users[userIndex] = this.selectedUser
-
-        // Close the edit dialog
-        this.editDialogVisible = false
-      }
-    },
-    deleteUser(user) {
+    async deleteUser(user) {
       // Find the index of the user in the users array
-      const userIndex = this.users.findIndex((u) => u.id === user.id)
-
-      if (userIndex > -1) {
-        // Remove the user from the users array
-        this.users.splice(userIndex, 1)
-      }
+      ElMessageBox.confirm(
+        `Are you sure you want to delete user (${user.firstName} ${user.lastName})?`,
+        'Warning',
+        {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      ).then(async () => {
+        try {
+          await api.removeUser(user.id)
+          const userIndex = this.users.findIndex((u) => u.id === user.id)
+          if (userIndex > -1) {
+            this.users.splice(userIndex, 1)
+          }
+          ElNotification({
+            title: 'Success',
+            message: 'User has been deleted',
+            type: 'success'
+          })
+        } catch (error) {
+          console.error(error)
+          ElNotification({
+            title: 'Error',
+            message: 'There was an error deleting user',
+            type: 'error'
+          })
+        }
+      })
     }
   }
 }
@@ -112,9 +171,26 @@ export default {
 
 <style scoped>
 .section {
-  margin-bottom: 20px;
+  max-width: 800px;
+  margin: 0 auto 20px;
 }
+
+.section .button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.create-users button {
+  width: 49%;
+}
+
+.create-users button:last-child {
+  margin-left: auto;
+}
+
 h2 {
   margin-bottom: 10px;
+  color: #fff;
+  text-align: center;
 }
 </style>

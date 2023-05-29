@@ -14,3 +14,10 @@ export type CreateUserDto = {
   firstName: string
   lastName: string
 }
+
+export type UpdateUserDto = {
+  email?: string
+  password?: string
+  firstName?: string
+  lastName?: string
+}

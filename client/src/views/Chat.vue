@@ -39,9 +39,9 @@ export default {
 }
 </script>
 
-<template v-loading="generating">
+<template>
   <div class="chat-page">
-    <div class="messages">
+    <div class="messages" v-loading="generating">
       <ul>
         <li v-for="(message, index) in messages" :key="index" :class="message.type">
           <span>{{ message.content }}</span>
@@ -86,6 +86,7 @@ export default {
   flex: 1 1 auto;
   overflow-x: hidden;
   overflow-y: auto;
+  padding: 20px;
 }
 
 .messages ul {

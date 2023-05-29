@@ -11,8 +11,6 @@ httpClient.interceptors.response.use(function (response) {
 
 httpClient.interceptors.request.use((config) => {
   const { accessToken } = authStore
-  console.log(1, accessToken)
-  console.log(2, localStorage.getItem('gertrude/accessToken'))
   if (accessToken && !config.url?.includes('auth')) {
     config.headers.Authorization = `Bearer ${accessToken}`
   }

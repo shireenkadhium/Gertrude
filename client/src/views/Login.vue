@@ -61,7 +61,7 @@ export default {
 <template>
   <div class="login-form">
     <h1 class="logo">Gertrude</h1>
-    <el-form ref="loginForm" :model="form" label-position="left" size="medium">
+    <el-form ref="loginForm" :model="form" label-position="left" size="default">
       <el-form-item label="Email" prop="email" :rules="emailRules" class="form-label">
         <el-input v-model="form.email" placeholder="Enter your email"></el-input>
       </el-form-item>

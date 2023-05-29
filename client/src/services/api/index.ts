@@ -1,6 +1,11 @@
 import httpClient from '@/services/httpClient'
 import type { AxiosRequestConfig } from 'axios'
-import type { CreateIndexDto, CreateUserDto, LoginDto } from '@/services/api/interfaces'
+import type {
+  CreateIndexDto,
+  CreateUserDto,
+  LoginDto,
+  UpdateUserDto
+} from '@/services/api/interfaces'
 
 type API = {
   [key: string]: (data?: any, config?: AxiosRequestConfig) => Promise<any>
@@ -43,8 +48,11 @@ const api: API = {
   getUsers: () => {
     return httpClient.get('/users')
   },
-  createUser: (user: CreateUserDto) => {
-    return httpClient.post('/users', user)
+  createUser: (createUserDto: CreateUserDto) => {
+    return httpClient.post('/users', createUserDto)
+  },
+  updateUser: (id: string, updateUserDto: UpdateUserDto) => {
+    return httpClient.patch(`/users/${id}`, updateUserDto)
   },
   removeUser: (id: string) => {
     return httpClient.delete(`/users/${id}`)
