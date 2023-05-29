@@ -26,15 +26,29 @@
         <el-form-item label="Email" prop="email" :rules="emailRules">
           <el-input v-model="userForm.email" placeholder="Enter email"></el-input>
         </el-form-item>
-        <el-form-item v-if="createMode" label="Password" prop="password" :rules="passwordRules">
-          <el-input v-model="userForm.password" placeholder="Enter password"></el-input>
+        <el-form-item label="First Name" prop="firstName" :rules="firstNameRules">
+          <el-input v-model="userForm.firstName" placeholder="Enter first name"></el-input>
         </el-form-item>
-        <el-form-item label="First Name" prop="firstName" :required="true">
-          <el-input v-model="userForm.firstName" placeholder="Enter name"></el-input>
+        <el-form-item label="Last Name" prop="lastName" :rules="lastNameRules">
+          <el-input v-model="userForm.lastName" placeholder="Enter last name"></el-input>
         </el-form-item>
-        <el-form-item label="Last Name" prop="lastName" :required="true">
-          <el-input v-model="userForm.lastName" placeholder="Enter name"></el-input>
-        </el-form-item>
+        <div v-if="editMode" class="update-password">
+          <el-checkbox v-model="editPassword" placeholder="Update Password">
+            Set new password
+          </el-checkbox>
+        </div>
+        <div class="password-fields" v-if="createMode || editPassword">
+          <el-form-item label="Password" prop="password" :rules="passwordRules">
+            <el-input v-model="userForm.password" placeholder="Enter password"></el-input>
+          </el-form-item>
+          <el-form-item
+            :rules="passwordConfirmationRules"
+            label="Password Confirmation"
+            prop="passwordConfirmation"
+          >
+            <el-input v-model="passwordConfirmation" placeholder="Confirm password"></el-input>
+          </el-form-item>
+        </div>
         <el-form-item class="button-holder">
           <el-button native-type="button" @click="cancel">Cancel</el-button>
           <el-button type="primary" native-type="submit">
@@ -60,18 +74,32 @@ export default {
         email: '',
         password: ''
       },
+      passwordConfirmation: '',
       emailRules: [
         { required: true, message: 'Please enter your email', trigger: 'blur' },
         { type: 'email', message: 'Invalid email format', trigger: ['blur', 'change'] }
       ],
+      firstNameRules: [
+        { required: true, message: 'Please enter your First Name', trigger: ['blur', 'change'] }
+      ],
+      lastNameRules: [
+        { required: true, message: 'Please enter your Last Name', trigger: ['blur', 'change'] }
+      ],
       passwordRules: [
         { required: true, message: 'Please enter your password', trigger: 'blur' },
-        { min: 6, message: 'Password length should be at least 6 characters', trigger: 'blur' }
+        {
+          min: 6,
+          message: 'Password length should be at least 6 characters',
+          trigger: ['blur', 'change']
+        }
       ],
-      editDialogVisible: false,
-      selectedUser: null,
+      passwordConfirmationRules: [
+        { required: true, message: 'Please enter your password', trigger: 'blur' },
+        { validator: this.validatePasswordConfirmation, trigger: ['blur', 'change'] }
+      ],
       createMode: false,
-      editMode: false
+      editMode: false,
+      editPassword: false
     }
   },
   mounted() {
@@ -129,6 +157,15 @@ export default {
         }
       })
     },
+    validatePasswordConfirmation(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('Please confirm your password'))
+      } else if (value !== this.userForm.password) {
+        callback(new Error('Passwords do not match'))
+      } else {
+        callback()
+      }
+    },
     editUser(user) {
       this.userForm = Object.assign({}, user)
       this.editMode = true
@@ -182,6 +219,14 @@ export default {
 
 .create-users button {
   width: 49%;
+}
+
+.button-holder {
+  padding-top: 20px;
+}
+
+.password-fields {
+  padding-top: 20px;
 }
 
 .create-users button:last-child {
