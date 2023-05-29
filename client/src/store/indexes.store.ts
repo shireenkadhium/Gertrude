@@ -17,7 +17,7 @@ export const useIndexesStore = defineStore('chats', {
     async createIndex(formData: FormData) {
       const chat = await api.createDocumentsIndex(formData)
       this.chats.push(chat)
-      console.log(this.chats)
+      return chat
     }
   }
 })

@@ -56,11 +56,14 @@ export default {
           })
 
           try {
-            store.createIndex(formData)
+            const chat = await store.createIndex(formData)
+            console.log(2222, chat)
+            const id = chat.id
             this.form.fileList = []
             this.form.title = ''
-            this.$router.push('/chats')
+            this.$router.push(`/chat/${id}`)
           } catch (error) {
+            console.log(error)
             ElNotification({
               title: 'Error',
               message: error?.response?.data?.message,

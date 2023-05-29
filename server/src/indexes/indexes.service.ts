@@ -27,6 +27,10 @@ export class IndexesService {
     const apiKeySetting = await this.settingsService.getApiKey();
     const OPENAI_API_KEY = apiKeySetting?.value;
 
+    if (!OPENAI_API_KEY) {
+      throw new ForbiddenException(ERROR_MESSAGES.INVALID_OPENAPI_KEY);
+    }
+
     const fileNames = files.map((file) => file.originalname);
 
     const index = await this.createIndex(fileNames, indexTitle);

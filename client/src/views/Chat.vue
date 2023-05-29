@@ -54,10 +54,10 @@ export default {
             this.messages.push({ content: res.answer, type: 'incoming' })
           })
         } catch (error) {
-          console.log(error)
+          const message = error.response?.data?.message || 'There was an error generating answer'
           ElNotification({
             title: 'Error',
-            message: 'There was an error generating answer',
+            message,
             type: 'error'
           })
         } finally {
