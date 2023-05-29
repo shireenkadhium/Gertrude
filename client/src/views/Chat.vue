@@ -76,7 +76,7 @@ export default {
 
 <template>
   <div class="chat-page">
-    <div class="messages" v-loading="generating">
+    <div class="messages">
       <ul>
         <li v-for="(message, index) in messages" :key="index" :class="message.type">
           <span>{{ message.content }}</span>
@@ -84,13 +84,16 @@ export default {
       </ul>
     </div>
     <div class="form-wrapper">
-      <el-form
-        class="form"
-        :model="newMessage"
-        @keyup.prevent="submitMessage"
-        @submit.native.prevent="sendMessage"
-      >
-        <el-form-item>
+      <el-form class="form" :model="newMessage" @keyup.prevent="submitMessage">
+        <div class="fake-input" v-if="generating">
+          <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <span>Generating..</span>
+        </div>
+        <el-form-item v-if="!generating">
           <el-input
             v-model="newMessage.content"
             type="textarea"
@@ -98,7 +101,7 @@ export default {
             resize="none"
             size="large"
             placeholder="Type your message..."
-            class="message-input"
+            @keydown.enter.native="sendMessage"
           />
         </el-form-item>
         <el-form-item>
@@ -145,6 +148,25 @@ export default {
   margin-right: auto;
   border-radius: 5px;
   text-align: left;
+}
+
+.fake-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 2px 11px;
+  line-height: 19px;
+  border-radius: 5px;
+  color: #cfd3dc;
+  margin-right: 10px;
+  height: 31px;
+  gap: 10px;
+  font-size: 14px;
+  border: 1px solid mediumpurple;
+}
+
+.fake-input span {
+  color: #fcf;
 }
 
 .messages li.incoming span {
@@ -205,5 +227,43 @@ export default {
 
 .el-button {
   margin-left: 10px;
+}
+
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 36px;
+  height: 40px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 4px;
+  width: 6px;
+  background: #fcf;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 4px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 16px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 28px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 4px;
+    height: 32px;
+  }
+  50%,
+  100% {
+    top: 12px;
+    height: 16px;
+  }
 }
 </style>

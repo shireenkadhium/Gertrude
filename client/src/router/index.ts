@@ -41,12 +41,12 @@ const router = createRouter({
           children: []
         },
         {
-          path: '/documents',
-          name: 'documents',
+          path: '/chats',
+          name: 'chats',
           meta: {
             isAdminRoute: true
           },
-          component: () => import('../views/Documents.vue'),
+          component: () => import('../views/ManageChats.vue'),
           children: []
         },
         {

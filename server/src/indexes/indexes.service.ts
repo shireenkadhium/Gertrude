@@ -149,6 +149,9 @@ export class IndexesService {
   }
 
   deleteIndex(id: string) {
+    const filePath = `assets/indexes/${id}.json`;
+    fs.unlinkSync(filePath);
+
     return this.indexRepository.delete(id);
   }
 

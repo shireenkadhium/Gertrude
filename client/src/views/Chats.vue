@@ -1,10 +1,4 @@
-<script>
-import api from '@/services/api'
-import { ElNotification } from 'element-plus'
-import { useIndexesStore } from '@/store/indexes.store'
-
-const store = useIndexesStore()
-</script>
+<script setup></script>
 
 <template>
   <div class="chats-page">

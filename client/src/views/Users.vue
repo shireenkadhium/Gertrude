@@ -3,10 +3,10 @@
     <div class="section" v-if="!createMode && !editMode">
       <h2>User List</h2>
       <el-table :data="users" style="width: 100%">
-        <el-table-column prop="firstName" label="First Name"></el-table-column>
-        <el-table-column prop="lastName" label="Last Name"></el-table-column>
-        <el-table-column prop="email" label="Email"></el-table-column>
-        <el-table-column label="Actions" width="170px">
+        <el-table-column class-name="column" prop="firstName" label="First Name"></el-table-column>
+        <el-table-column class-name="column" prop="lastName" label="Last Name"></el-table-column>
+        <el-table-column class-name="column" prop="email" label="Email"></el-table-column>
+        <el-table-column class-name="column" label="Actions" width="170px">
           <template #default="scope">
             <el-button @click="editUser(scope.row)">Edit</el-button>
             <el-button type="danger" @click="deleteUser(scope.row)">Delete</el-button>
@@ -216,6 +216,10 @@ export default {
 </script>
 
 <style scoped>
+.el-table__header-wrapper .column {
+  background-color: transparent !important;
+}
+
 .section {
   max-width: 800px;
   margin: 0 auto 20px;

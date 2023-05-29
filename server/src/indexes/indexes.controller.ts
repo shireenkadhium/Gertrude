@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   Body,
+  Delete,
 } from '@nestjs/common';
 import { IndexesService } from './indexes.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
@@ -45,5 +46,9 @@ export class IndexesController {
       params.id,
     );
     return { message: 'Successfully queried index', answer: answer };
+  }
+  @Delete(':id')
+  async delete(@Param() params: { id: string }) {
+    return this.indexesService.deleteIndex(params.id);
   }
 }
