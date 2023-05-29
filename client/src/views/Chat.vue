@@ -1,9 +1,15 @@
 <script>
 import api from '@/services/api'
+import { ElNotification } from 'element-plus'
+import { useIndexesStore } from '@/store/indexes.store'
+
+const store = useIndexesStore()
 
 export default {
+  props: ['id'],
   data() {
     return {
+      indexes: [],
       messages: [],
       generating: false,
       newMessage: {
@@ -12,19 +18,48 @@ export default {
       }
     }
   },
+  watch: {
+    $route(to, from) {
+      this.messages = []
+      this.generating = false
+      this.newMessage.content = ''
+    }
+  },
   methods: {
+    async getIndexes() {
+      try {
+        this.indexes = await api.getDocumentsIndexes()
+      } catch (err) {
+        console.log(err)
+        ElNotification({
+          title: 'Error',
+          message: 'There was an error fetching indexes',
+          type: 'error'
+        })
+      }
+    },
     async sendMessage() {
       if (this.newMessage.content) {
-        const question = this.newMessage.content
+        const prompt = this.newMessage.content
         this.messages.push({ content: this.newMessage.content, type: 'outgoing' })
         this.newMessage.content = ''
         try {
           this.generating = true
-          await api.getAnswer(question).then((res) => {
+          const id = this.$route.params.id
+          const params = {
+            params: { prompt },
+            id
+          }
+          await api.getAnswer(params).then((res) => {
             this.messages.push({ content: res.answer, type: 'incoming' })
           })
         } catch (error) {
           console.log(error)
+          ElNotification({
+            title: 'Error',
+            message: 'There was an error generating answer',
+            type: 'error'
+          })
         } finally {
           this.generating = false
         }

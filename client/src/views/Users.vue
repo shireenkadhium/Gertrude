@@ -39,14 +39,22 @@
         </div>
         <div class="password-fields" v-if="createMode || editPassword">
           <el-form-item label="Password" prop="password" :rules="passwordRules">
-            <el-input v-model="userForm.password" placeholder="Enter password"></el-input>
+            <el-input
+              v-model="userForm.password"
+              placeholder="Enter password"
+              show-password
+            ></el-input>
           </el-form-item>
           <el-form-item
             :rules="passwordConfirmationRules"
             label="Password Confirmation"
             prop="passwordConfirmation"
           >
-            <el-input v-model="passwordConfirmation" placeholder="Confirm password"></el-input>
+            <el-input
+              v-model="userForm.passwordConfirmation"
+              placeholder="Confirm password"
+              show-password
+            ></el-input>
           </el-form-item>
         </div>
         <el-form-item class="button-holder">
@@ -72,9 +80,9 @@ export default {
         firstName: '',
         lastName: '',
         email: '',
-        password: ''
+        password: '',
+        passwordConfirmation: ''
       },
-      passwordConfirmation: '',
       emailRules: [
         { required: true, message: 'Please enter your email', trigger: 'blur' },
         { type: 'email', message: 'Invalid email format', trigger: ['blur', 'change'] }
@@ -135,9 +143,10 @@ export default {
               type: 'success'
             })
           } else if (this.editMode) {
-            const userId = this.userForm.id
-            const user = await api.updateUser(userId, this.userForm)
-            const userIndex = this.users.findIndex((user) => user.id === userId)
+            const id = this.userForm.id
+            const body = this.userForm
+            const user = await api.updateUser({ id, body })
+            const userIndex = this.users.findIndex((user) => user.id === id)
             if (userIndex > -1) {
               // Update the user in the users array
               Object.assign(this.users[userIndex], user)

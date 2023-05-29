@@ -5,6 +5,9 @@ export class Index {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  name: string;
+  @Column({ unique: true })
+  title: string;
+
+  @Column('text', { array: true })
+  files: string[];
 }

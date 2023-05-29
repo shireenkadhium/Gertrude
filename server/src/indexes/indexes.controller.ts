@@ -2,60 +2,48 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   UseInterceptors,
   UploadedFiles,
   Query,
+  Param,
+  Body,
 } from '@nestjs/common';
 import { IndexesService } from './indexes.service';
-import { CreateIndexDto } from './dto/create-index.dto';
-import { UpdateIndexDto } from './dto/update-index.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { GetIndexResponseDto } from './dto/get-index.response.dto';
 
 @ApiTags('Indexes')
 @Controller('indexes')
 export class IndexesController {
   constructor(private readonly indexesService: IndexesService) {}
 
-  // @Post()
-  // create(@Body() createIndexDto: CreateIndexDto) {
-  //   return this.indexesService.create(createIndexDto);
-  // }
+  @Get()
+  async getIndexes(): Promise<GetIndexResponseDto[]> {
+    return this.indexesService.findAll();
+  }
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async createIndex(@UploadedFiles() files: Array<Express.Multer.File>) {
-    await this.indexesService.create(files);
-    return { message: 'Successfully uploaded files and created index' };
+  @ApiConsumes('multipart/form-data')
+  async createIndex(
+    @Body() body: { title: string },
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    const { title } = body;
+    return await this.indexesService.createLlamaIndex(files, title);
   }
-  // @Get()
-  // findAll() {
-  //   return this.indexesService.findAll();
-  // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.indexesService.findOne(+id);
-  // }
-  //
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateIndexDto: UpdateIndexDto) {
-  //   return this.indexesService.update(+id, updateIndexDto);
-  // }
-  //
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.indexesService.remove(+id);
-  // }
-
-  @Get()
-  async query(@Query() query): Promise<{ message: string; answer: string }> {
-    console.log(query);
-    const answer = await this.indexesService.query(query.prompt);
+  @Get(':id')
+  async query(
+    @Param() params: { id: string },
+    @Query() query,
+  ): Promise<{ message: string; answer: string }> {
+    console.log(params, query);
+    const answer = await this.indexesService.queryLlamaIndex(
+      query.prompt,
+      params.id,
+    );
     return { message: 'Successfully queried index', answer: answer };
   }
 }

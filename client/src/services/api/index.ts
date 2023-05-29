@@ -1,11 +1,6 @@
 import httpClient from '@/services/httpClient'
 import type { AxiosRequestConfig } from 'axios'
-import type {
-  CreateIndexDto,
-  CreateUserDto,
-  LoginDto,
-  UpdateUserDto
-} from '@/services/api/interfaces'
+import type { CreateUserDto, LoginDto, UpdateUserDto } from '@/services/api/interfaces'
 
 type API = {
   [key: string]: (data?: any, config?: AxiosRequestConfig) => Promise<any>
@@ -18,9 +13,8 @@ const api: API = {
   getDocumentsIndexes: () => {
     return httpClient.get('/indexes')
   },
-  // createDocumentsIndex: (creatIndexDto: CreateIndexDto) => {
-  createDocumentsIndex: (files: FormData[]) => {
-    return httpClient.post('/indexes', files, {
+  createDocumentsIndex: (formData: FormData) => {
+    return httpClient.post('/indexes', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -29,12 +23,9 @@ const api: API = {
   removeDocumentsIndex: (id: string) => {
     return httpClient.delete(`/indexes/${id}`)
   },
-  getAnswer: (prompt: string) => {
-    return httpClient.get(`/indexes`, {
-      params: {
-        prompt
-      }
-    })
+  getAnswer: (payload) => {
+    const { id, params } = payload
+    return httpClient.get(`/indexes/${id}`, { params })
   },
   setApiKey: (body) => {
     return httpClient.post('/settings/openapi-key', body)
@@ -51,8 +42,8 @@ const api: API = {
   createUser: (createUserDto: CreateUserDto) => {
     return httpClient.post('/users', createUserDto)
   },
-  updateUser: (id: string, updateUserDto: UpdateUserDto) => {
-    return httpClient.patch(`/users/${id}`, updateUserDto)
+  updateUser: ({ id, body }: { id: string; body: UpdateUserDto }) => {
+    return httpClient.patch(`/users/${id}`, body)
   },
   removeUser: (id: string) => {
     return httpClient.delete(`/users/${id}`)

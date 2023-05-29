@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { authStore } from '@/store'
+import { authStore } from '@/store/auth.store'
 import Layout from '@/layouts/Main.vue'
 
 const router = createRouter({
@@ -24,10 +24,20 @@ const router = createRouter({
       component: Layout,
       children: [
         {
-          path: '/chat',
+          path: '/chats',
+          name: 'chats',
+          meta: {},
+          component: () => import('../views/Chats.vue'),
+          children: []
+        },
+        {
+          path: '/chat/:id?',
           name: 'chat',
           meta: {},
           component: () => import('../views/Chat.vue'),
+          props: (route) => ({
+            id: route.params.id
+          }),
           children: []
         },
         {
@@ -36,7 +46,7 @@ const router = createRouter({
           meta: {
             isAdminRoute: true
           },
-          component: () => import('../views/UploadDocuments.vue'),
+          component: () => import('../views/Documents.vue'),
           children: []
         },
         {
@@ -56,6 +66,10 @@ const router = createRouter({
           },
           component: () => import('../views/Settings.vue'),
           children: []
+        },
+        {
+          path: '/chat/',
+          redirect: { name: 'chat' }
         },
         {
           path: '*',

@@ -3,26 +3,34 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { UpdateIndexDto } from './dto/update-index.dto';
 import { spawn } from 'child_process';
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { SettingsService } from '../settings/settings.service';
 import { ERROR_MESSAGES } from './indexes.constants';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Index } from './entities/index.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class IndexesService {
-  constructor(private readonly settingsService: SettingsService) {}
-  saveDocuments(files: Array<Express.Multer.File>) {
-    const directoryPath = 'assets/temp';
-    this.removeExistingFiles(directoryPath);
-    this.saveFiles(directoryPath, files);
-  }
-  async create(files: Array<Express.Multer.File>): Promise<string> {
+  constructor(
+    private readonly settingsService: SettingsService,
+    @InjectRepository(Index) private indexRepository: Repository<Index>,
+  ) {}
+  async createLlamaIndex(
+    files: Array<Express.Multer.File>,
+    indexTitle: string,
+  ): Promise<Index> {
     this.saveDocuments(files);
     const apiKeySetting = await this.settingsService.getApiKey();
     const OPENAI_API_KEY = apiKeySetting?.value;
+
+    const fileNames = files.map((file) => file.originalname);
+
+    const index = await this.createIndex(fileNames, indexTitle);
+    const id = index.id;
 
     if (!OPENAI_API_KEY) {
       throw new ForbiddenException(ERROR_MESSAGES.INVALID_OPENAPI_KEY);
@@ -34,7 +42,7 @@ export class IndexesService {
         '../..',
         'indexes/scripts/create-index.py',
       );
-      const process = spawn('python3', [scriptPath, OPENAI_API_KEY]);
+      const process = spawn('python3', [scriptPath, OPENAI_API_KEY, id]);
       let result = '';
       process.stdout.on('data', (data) => {
         console.log(data.toString());
@@ -44,20 +52,21 @@ export class IndexesService {
         console.log('errr', data.toString());
         result += data.toString();
       });
-      process.on('close', function (code) {
+      process.on('close', (code) => {
         if (code !== 0) {
+          this.deleteIndex(index.id);
           return reject('Error creating index');
         }
-        resolve(result);
+        resolve(index);
       });
-      process.on('error', function (err) {
+      process.on('error', (err) => {
         console.log(err.toString());
         reject(err);
       });
     });
   }
 
-  async query(prompt: string): Promise<string> {
+  async queryLlamaIndex(prompt: string, indexName: string): Promise<string> {
     const apiKeySetting = await this.settingsService.getApiKey();
     const OPENAI_API_KEY = apiKeySetting?.value;
 
@@ -71,7 +80,12 @@ export class IndexesService {
         '../..',
         'indexes/scripts/query-index.py',
       );
-      const process = spawn('python3', [scriptPath, OPENAI_API_KEY, prompt]);
+      const process = spawn('python3', [
+        scriptPath,
+        OPENAI_API_KEY,
+        prompt,
+        indexName,
+      ]);
       let result = '';
       process.stdout.on('data', (data) => {
         console.log(data.toString());
@@ -110,23 +124,33 @@ export class IndexesService {
     }
   }
 
-  // create(createIndexDto: CreateIndexDto) {
-  //   return 'This action adds a new index';
-  // }
+  async createIndex(files: string[], title: string) {
+    try {
+      const existingIndex = await this.indexRepository.findOneBy({ title });
+      if (existingIndex) {
+        throw new BadRequestException('Chat with this name already exists');
+      }
+      return this.indexRepository.save({ files, title });
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
+  }
 
   findAll() {
-    return `This action returns all indexes`;
+    return this.indexRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} index`;
+  findOne(id: string) {
+    return this.indexRepository.findOneBy({ id });
   }
 
-  update(id: number, updateIndexDto: UpdateIndexDto) {
-    return `This action updates a #${id} index`;
+  deleteIndex(id: string) {
+    return this.indexRepository.delete(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} index`;
+  saveDocuments(files: Array<Express.Multer.File>) {
+    const directoryPath = 'assets/temp';
+    this.removeExistingFiles(directoryPath);
+    this.saveFiles(directoryPath, files);
   }
 }

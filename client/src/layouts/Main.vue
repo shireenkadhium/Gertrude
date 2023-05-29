@@ -1,44 +1,44 @@
 <script lang="ts" setup>
-import { Document, Lock, ChatSquare, User, Setting } from '@element-plus/icons-vue'
-import { authStore } from '@/store'
 import { useRouter } from 'vue-router'
+import { Document, Lock, ChatSquare, User, Setting } from '@element-plus/icons-vue'
+import { authStore } from '@/store/auth.store'
+import { useIndexesStore } from '@/store/indexes.store'
+
+const store = useIndexesStore()
 
 const router = useRouter()
-
-const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
-const REFRESH_TOKEN_NAMESPACE = 'gertrude/accessToken'
+const isAdmin = authStore.roles.includes('admin')
 
 const logout = () => {
-  authStore.accessToken = ''
-  authStore.refreshToken = ''
-  authStore.isAuthenticated = false
-  localStorage.removeItem(ACCESS_TOKEN_NAMESPACE)
-  localStorage.removeItem(REFRESH_TOKEN_NAMESPACE)
+  authStore.reset()
   router.replace('/login')
 }
-
-const isAdmin = authStore.roles.includes('admin')
 </script>
 
 <template>
   <el-container class="app-layout">
-    <el-aside width="200px">
+    <el-aside width="300px">
       <h2 class="logo">Gertrude</h2>
-      <el-menu default-active="1" class="el-menu-vertical-demo" router>
-        <el-menu-item index="1" route="chat">
+      <el-menu :default-active="$route.name" class="el-menu-vertical-demo" router>
+        <el-menu-item
+          v-for="(chat, index) in store.chats"
+          :index="`chat/${chat.id}`"
+          :route="`/chat/${chat.id}`"
+        >
           <el-icon><chat-square /></el-icon>
-          <span>Chat</span>
+          <span class="chat-name">{{ chat.title }}</span>
         </el-menu-item>
+        <el-divider></el-divider>
         <div v-if="isAdmin">
-          <el-menu-item index="2" route="documents">
+          <el-menu-item index="documents" route="/documents">
             <el-icon><document /></el-icon>
             <span>Document</span>
           </el-menu-item>
-          <el-menu-item index="3" route="users">
+          <el-menu-item index="users" route="/users">
             <el-icon><user /></el-icon>
             <span>Users</span>
           </el-menu-item>
-          <el-menu-item index="4" route="settings">
+          <el-menu-item index="settings" route="/settings">
             <el-icon><setting /></el-icon>
             <span>Settings</span>
           </el-menu-item>
@@ -107,5 +107,11 @@ const isAdmin = authStore.roles.includes('admin')
 
 .logout-button span {
   font-size: 14px;
+}
+
+.chat-name {
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

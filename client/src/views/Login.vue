@@ -1,6 +1,6 @@
 <script>
 import api from '@/services/api'
-import { authStore } from '@/store'
+import { authStore } from '@/store/auth.store'
 import { ElNotification } from 'element-plus'
 
 const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
@@ -38,7 +38,7 @@ export default {
             localStorage.setItem(ACCESS_TOKEN_NAMESPACE, accessToken)
             localStorage.setItem(REFRESH_TOKEN_NAMESPACE, refreshToken)
             localStorage.setItem(ROLES_NAMESPACE, JSON.stringify(roles))
-            this.$router.replace('/chat')
+            this.$router.replace('/chats')
           } catch (err) {
             console.log(err)
             ElNotification({
