@@ -84,7 +84,7 @@ export default {
       </ul>
     </div>
     <div class="form-wrapper">
-      <el-form class="form" :model="newMessage" @keyup.prevent="submitMessage">
+      <el-form class="form" :model="newMessage">
         <div class="fake-input" v-if="generating">
           <div class="lds-facebook">
             <div></div>
@@ -105,7 +105,13 @@ export default {
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" native-type="submit" :disabled="generating">Send</el-button>
+          <el-button
+            type="primary"
+            native-type="submit"
+            :disabled="generating"
+            @click.prevent="sendMessage"
+            >Send</el-button
+          >
         </el-form-item>
       </el-form>
     </div>

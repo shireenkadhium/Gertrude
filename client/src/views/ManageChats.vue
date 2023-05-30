@@ -105,7 +105,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="!createMode" class="existing-chats">
+  <div v-if="!createMode && !store.noChats" class="existing-chats">
     <div class="header">
       <h2>Manage Chats</h2>
       <el-button type="primary" @click.prevent="createMode = true">Create Chat</el-button>

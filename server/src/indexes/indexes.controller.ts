@@ -8,6 +8,8 @@ import {
   Param,
   Body,
   Delete,
+  BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { IndexesService } from './indexes.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
@@ -40,12 +42,15 @@ export class IndexesController {
     @Param() params: { id: string },
     @Query() query,
   ): Promise<{ message: string; answer: string }> {
-    console.log(params, query);
-    const answer = await this.indexesService.queryLlamaIndex(
-      query.prompt,
-      params.id,
-    );
-    return { message: 'Successfully queried index', answer: answer };
+    try {
+      const answer = await this.indexesService.queryLlamaIndex(
+        query.prompt,
+        params.id,
+      );
+      return { message: 'Successfully queried index', answer: answer };
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
   }
   @Delete(':id')
   async delete(@Param() params: { id: string }) {

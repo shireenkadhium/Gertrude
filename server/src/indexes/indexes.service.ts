@@ -90,6 +90,7 @@ export class IndexesService {
         prompt,
         indexName,
       ]);
+
       let result = '';
       process.stdout.on('data', (data) => {
         console.log(data.toString());
@@ -97,11 +98,13 @@ export class IndexesService {
       });
       process.on('close', function (code) {
         if (code !== 0) {
-          return reject('Error querying index');
+          return reject(
+            'Error querying index. Most likely you have exceeded your openai quota',
+          );
         }
         resolve(result);
       });
-      process.on('error', function (err) {
+      process.stdout.on('error', function (err) {
         console.log(err.toString());
         reject(err);
       });
