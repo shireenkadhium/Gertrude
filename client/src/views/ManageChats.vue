@@ -1,10 +1,10 @@
 <script>
 import { ElNotification } from 'element-plus'
-import { useIndexesStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/indexes.store'
 
 export default {
   setup() {
-    const store = useIndexesStore()
+    const store = useChatStore()
     return { store }
   },
   data() {
@@ -60,7 +60,7 @@ export default {
           })
 
           try {
-            const chat = await this.store.createIndex(formData)
+            const chat = await this.store.createChat(formData)
             const id = chat.id
             this.form.fileList = []
             this.form.title = ''
@@ -85,7 +85,7 @@ export default {
     },
     async deleteChat(chat) {
       try {
-        await this.store.deleteIndex(chat.id)
+        await this.store.deleteChat(chat.id)
         ElNotification({
           title: 'Success',
           message: 'Chat deleted successfully',
@@ -275,5 +275,6 @@ h2 {
   border-radius: 5px;
   font-size: 12px;
   background: #092645;
+  color: #fff;
 }
 </style>

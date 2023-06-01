@@ -1,9 +1,9 @@
 <script>
 import api from '@/services/api'
 import { ElNotification } from 'element-plus'
-import { useIndexesStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/indexes.store'
 
-const store = useIndexesStore()
+const store = useChatStore()
 
 export default {
   props: ['id'],

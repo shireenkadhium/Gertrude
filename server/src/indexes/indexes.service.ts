@@ -59,7 +59,9 @@ export class IndexesService {
       process.on('close', (code) => {
         if (code !== 0) {
           this.deleteIndex(index.id);
-          return reject('Error creating index');
+          return reject(
+            'Error creating chat. Most likely you have exceeded your openai quota and need to upgrade subscription plan or change the API key',
+          );
         }
         resolve(index);
       });
@@ -99,7 +101,7 @@ export class IndexesService {
       process.on('close', function (code) {
         if (code !== 0) {
           return reject(
-            'Error querying index. Most likely you have exceeded your openai quota',
+            'Error querying documents. Most likely you have exceeded your openai quota and need to either upgrade subscription plan or change the API key',
           );
         }
         resolve(result);
@@ -147,14 +149,13 @@ export class IndexesService {
     return this.indexRepository.find();
   }
 
-  findOne(id: string) {
-    return this.indexRepository.findOneBy({ id });
-  }
-
   deleteIndex(id: string) {
-    const filePath = `assets/indexes/${id}.json`;
-    fs.unlinkSync(filePath);
-
+    try {
+      const filePath = `assets/indexes/${id}.json`;
+      fs.unlinkSync(filePath);
+    } catch (err) {
+      console.log(err);
+    }
     return this.indexRepository.delete(id);
   }
 

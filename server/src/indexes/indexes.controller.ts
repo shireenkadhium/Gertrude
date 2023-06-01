@@ -34,7 +34,12 @@ export class IndexesController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     const { title } = body;
-    return await this.indexesService.createLlamaIndex(files, title);
+    try {
+      const chat = await this.indexesService.createLlamaIndex(files, title);
+      return chat;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   @Get(':id')

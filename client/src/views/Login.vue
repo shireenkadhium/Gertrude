@@ -2,12 +2,17 @@
 import api from '@/services/api'
 import { authStore } from '@/store/auth.store'
 import { ElNotification } from 'element-plus'
+import { useChatStore } from '@/store/indexes.store'
 
 const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
 const REFRESH_TOKEN_NAMESPACE = 'gertrude/refreshToken'
 const ROLES_NAMESPACE = 'gertrude/roles'
 
 export default {
+  setup() {
+    const chatStore = useChatStore()
+    return { authStore, chatStore }
+  },
   data() {
     return {
       form: {
@@ -38,7 +43,18 @@ export default {
             localStorage.setItem(ACCESS_TOKEN_NAMESPACE, accessToken)
             localStorage.setItem(REFRESH_TOKEN_NAMESPACE, refreshToken)
             localStorage.setItem(ROLES_NAMESPACE, JSON.stringify(roles))
-            this.$router.replace('/chats')
+
+            const chats = await this.chatStore.getChats()
+
+            if (this.chatStore.defaultChat) {
+              this.$router.replace(`/chat/${this.chatStore.defaultChat?.id}`)
+              return
+            }
+
+            if (chats.length === 0) {
+              this.$router.replace('/no-chats')
+              return
+            }
           } catch (err) {
             console.log(err)
             ElNotification({

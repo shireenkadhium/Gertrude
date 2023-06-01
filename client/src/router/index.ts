@@ -24,10 +24,10 @@ const router = createRouter({
       component: Layout,
       children: [
         {
-          path: '/chats',
-          name: 'chats',
+          path: '/no-chats',
+          name: 'no-chats',
           meta: {},
-          component: () => import('../views/Chats.vue'),
+          component: () => import('../views/NoChats.vue'),
           children: []
         },
         {

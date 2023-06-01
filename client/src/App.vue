@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { useIndexesStore } from '@/store/indexes.store'
-const store = useIndexesStore()
-store.getIndexes()
+import { useChatStore } from '@/store/indexes.store'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  const store = useChatStore()
+  store.getChats()
+})
 </script>
 
 <template>
