@@ -1,6 +1,6 @@
 <script>
 import { ElNotification } from 'element-plus'
-import { useChatStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/chats.store'
 
 export default {
   setup() {

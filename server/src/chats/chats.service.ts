@@ -8,21 +8,21 @@ import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SettingsService } from '../settings/settings.service';
-import { ERROR_MESSAGES } from './indexes.constants';
+import { ERROR_MESSAGES } from './chats.constants';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Index } from './entities/index.entity';
+import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class IndexesService {
+export class ChatsService {
   constructor(
     private readonly settingsService: SettingsService,
-    @InjectRepository(Index) private indexRepository: Repository<Index>,
+    @InjectRepository(Chat) private indexRepository: Repository<Chat>,
   ) {}
   async createLlamaIndex(
     files: Array<Express.Multer.File>,
     indexTitle: string,
-  ): Promise<Index> {
+  ): Promise<Chat> {
     this.saveDocuments(files);
     const apiKeySetting = await this.settingsService.getApiKey();
     const OPENAI_API_KEY = apiKeySetting?.value;

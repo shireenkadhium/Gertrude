@@ -1,7 +1,7 @@
 <script>
 import api from '@/services/api'
 import { ElNotification } from 'element-plus'
-import { useChatStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/chats.store'
 
 const store = useChatStore()
 

@@ -2,7 +2,7 @@
 import api from '@/services/api'
 import { authStore } from '@/store/auth.store'
 import { ElNotification } from 'element-plus'
-import { useChatStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/chats.store'
 
 const ACCESS_TOKEN_NAMESPACE = 'gertrude/accessToken'
 const REFRESH_TOKEN_NAMESPACE = 'gertrude/refreshToken'

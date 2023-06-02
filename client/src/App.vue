@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { useChatStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/chats.store'
 import { onMounted } from 'vue'
 
 onMounted(() => {

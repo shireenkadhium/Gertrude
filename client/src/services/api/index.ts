@@ -11,21 +11,21 @@ const api: API = {
     return httpClient.post('/auth/sign-in', credentials)
   },
   getDocumentsIndexes: () => {
-    return httpClient.get('/indexes')
+    return httpClient.get('/chats')
   },
   createDocumentsIndex: (formData: FormData) => {
-    return httpClient.post('/indexes', formData, {
+    return httpClient.post('/chats', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
   },
   removeDocumentsIndex: (id: string) => {
-    return httpClient.delete(`/indexes/${id}`)
+    return httpClient.delete(`/chats/${id}`)
   },
   getAnswer: (payload) => {
     const { id, params } = payload
-    return httpClient.get(`/indexes/${id}`, { params })
+    return httpClient.get(`/chats/${id}`, { params })
   },
   setApiKey: (body) => {
     return httpClient.post('/settings/openapi-key', body)

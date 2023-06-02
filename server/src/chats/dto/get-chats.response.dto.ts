@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 
 @Exclude()
-export class GetIndexResponseDto {
+export class GetChatsResponseDto {
   id: string;
   files: string[];
 }

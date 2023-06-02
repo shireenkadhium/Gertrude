@@ -11,18 +11,18 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { IndexesService } from './indexes.service';
+import { ChatsService } from './chats.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { GetIndexResponseDto } from './dto/get-index.response.dto';
+import { GetChatsResponseDto } from './dto/get-chats.response.dto';
 
-@ApiTags('Indexes')
-@Controller('indexes')
-export class IndexesController {
-  constructor(private readonly indexesService: IndexesService) {}
+@ApiTags('Chats')
+@Controller('chats')
+export class ChatsController {
+  constructor(private readonly indexesService: ChatsService) {}
 
   @Get()
-  async getIndexes(): Promise<GetIndexResponseDto[]> {
+  async getIndexes(): Promise<GetChatsResponseDto[]> {
     return this.indexesService.findAll();
   }
 

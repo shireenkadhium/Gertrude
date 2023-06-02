@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { Document, Lock, ChatSquare, User, Setting } from '@element-plus/icons-vue'
 import { authStore } from '@/store/auth.store'
-import { useChatStore } from '@/store/indexes.store'
+import { useChatStore } from '@/store/chats.store'
 
 const store = useChatStore()
 const route = useRoute()

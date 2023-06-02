@@ -9,7 +9,12 @@
         <el-table-column class-name="column" label="Actions" width="170px">
           <template #default="scope">
             <el-button @click="editUser(scope.row)">Edit</el-button>
-            <el-button type="danger" @click="deleteUser(scope.row)">Delete</el-button>
+            <el-button
+              type="danger"
+              @click="deleteUser(scope.row)"
+              :disabled="scope.row?.email === authStore.email"
+              >Delete</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -193,7 +198,7 @@ export default {
       this.editMode = true
     },
     async deleteUser(user) {
-      if (user.email === authStore.user.email) {
+      if (user.email === authStore.email) {
         return ElNotification({
           title: 'Error',
           message: 'You cannot delete yourself',
