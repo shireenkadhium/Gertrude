@@ -19,11 +19,11 @@ import { GetChatsResponseDto } from './dto/get-chats.response.dto';
 @ApiTags('Chats')
 @Controller('chats')
 export class ChatsController {
-  constructor(private readonly indexesService: ChatsService) {}
+  constructor(private readonly chatsService: ChatsService) {}
 
   @Get()
   async getIndexes(): Promise<GetChatsResponseDto[]> {
-    return this.indexesService.findAll();
+    return this.chatsService.findAll();
   }
 
   @Post()
@@ -35,7 +35,7 @@ export class ChatsController {
   ) {
     const { title } = body;
     try {
-      const chat = await this.indexesService.createLlamaIndex(files, title);
+      const chat = await this.chatsService.createChat(files, title);
       return chat;
     } catch (error) {
       throw new BadRequestException(error);
@@ -48,7 +48,7 @@ export class ChatsController {
     @Query() query,
   ): Promise<{ message: string; answer: string }> {
     try {
-      const answer = await this.indexesService.queryLlamaIndex(
+      const answer = await this.chatsService.sendMessage(
         query.prompt,
         params.id,
       );
@@ -59,6 +59,6 @@ export class ChatsController {
   }
   @Delete(':id')
   async delete(@Param() params: { id: string }) {
-    return this.indexesService.deleteIndex(params.id);
+    return this.chatsService.deleteIndex(params.id);
   }
 }

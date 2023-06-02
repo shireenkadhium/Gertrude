@@ -19,7 +19,7 @@ export class ChatsService {
     private readonly settingsService: SettingsService,
     @InjectRepository(Chat) private indexRepository: Repository<Chat>,
   ) {}
-  async createLlamaIndex(
+  async createChat(
     files: Array<Express.Multer.File>,
     indexTitle: string,
   ): Promise<Chat> {
@@ -72,7 +72,7 @@ export class ChatsService {
     });
   }
 
-  async queryLlamaIndex(prompt: string, indexName: string): Promise<string> {
+  async sendMessage(prompt: string, chatId: string): Promise<string> {
     const apiKeySetting = await this.settingsService.getApiKey();
     const OPENAI_API_KEY = apiKeySetting?.value;
 
@@ -90,7 +90,7 @@ export class ChatsService {
         scriptPath,
         OPENAI_API_KEY,
         prompt,
-        indexName,
+        chatId,
       ]);
 
       let result = '';
