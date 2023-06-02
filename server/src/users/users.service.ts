@@ -24,7 +24,9 @@ export class UsersService {
   }
 
   async findAll(): Promise<GetUserResponseDto[]> {
-    const users = await this.usersRepository.find();
+    const users = await this.usersRepository.find({
+      where: { isSystemUser: false },
+    });
     return users.map((user) => plainToInstance(GetUserResponseDto, user));
   }
 

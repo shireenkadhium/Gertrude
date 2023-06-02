@@ -31,4 +31,7 @@ export class User {
 
   @Column({ nullable: true })
   refreshToken?: string;
+
+  @Column({ default: false })
+  isSystemUser: boolean;
 }

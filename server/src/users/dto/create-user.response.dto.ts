@@ -1,4 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
+import Role from '../roles/role.enum';
 
 @Exclude()
 export class CreateUserResponseDto {
@@ -13,4 +14,7 @@ export class CreateUserResponseDto {
 
   @Expose()
   email: string;
+
+  @Expose()
+  roles: Role[];
 }

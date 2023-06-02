@@ -20,10 +20,9 @@ import { AuthGuard } from '../auth/auth.guard';
           port: configService.get('db.postgres.port'),
           username: configService.get('db.postgres.user'),
           password: configService.get('db.postgres.password'),
-          synchronize: true,
-          forceSync: false,
           entities: ['dist/**/*.entity{.ts,.js}'],
-          logging: true,
+          synchronize: false,
+          logging: false,
         };
       },
       inject: [ConfigService],

@@ -39,6 +39,7 @@ export default {
             authStore.accessToken = accessToken
             authStore.refreshToken = refreshToken
             authStore.roles = roles
+            authStore.email = username
             authStore.isAuthenticated = true
             localStorage.setItem(ACCESS_TOKEN_NAMESPACE, accessToken)
             localStorage.setItem(REFRESH_TOKEN_NAMESPACE, refreshToken)

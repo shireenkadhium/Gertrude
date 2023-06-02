@@ -9,6 +9,7 @@ const storedRoles = JSON.parse(localStorage.getItem(ROLES_NAMESPACE) as string)
 const accessToken = ref(localStorage.getItem(ACCESS_TOKEN_NAMESPACE) || '')
 const refreshToken = ref(localStorage.getItem(REFRESH_TOKEN_NAMESPACE) || '')
 const isAuthenticated = ref(Boolean(accessToken.value))
+const email = ref('')
 const roles = ref(storedRoles || [])
 
 export const authStore = reactive({
@@ -16,6 +17,7 @@ export const authStore = reactive({
   accessToken,
   refreshToken,
   roles,
+  email,
   reset() {
     localStorage.removeItem(ACCESS_TOKEN_NAMESPACE)
     localStorage.removeItem(REFRESH_TOKEN_NAMESPACE)
@@ -23,6 +25,7 @@ export const authStore = reactive({
     roles.value = []
     accessToken.value = ''
     refreshToken.value = ''
+    email.value = ''
     isAuthenticated.value = false
   }
 })

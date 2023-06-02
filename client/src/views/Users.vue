@@ -57,6 +57,9 @@
             ></el-input>
           </el-form-item>
         </div>
+        <div v-if="createMode" class="is-admin">
+          <el-checkbox v-model="isAdmin" placeholder="Is Admin"> Is admin </el-checkbox>
+        </div>
         <el-form-item class="button-holder">
           <el-button native-type="button" @click="cancel">Cancel</el-button>
           <el-button type="primary" native-type="submit">
@@ -71,8 +74,14 @@
 <script>
 import api from '@/services/api'
 import { ElNotification, ElMessageBox } from 'element-plus'
+import { authStore } from '@/store/auth.store'
 
 export default {
+  setup() {
+    return {
+      authStore
+    }
+  },
   data() {
     return {
       users: [],
@@ -107,7 +116,8 @@ export default {
       ],
       createMode: false,
       editMode: false,
-      editPassword: false
+      editPassword: false,
+      isAdmin: false
     }
   },
   mounted() {
@@ -134,7 +144,10 @@ export default {
       this.$refs.userForm.validate(async (valid) => {
         if (valid) {
           if (this.createMode) {
-            const user = await api.createUser(this.userForm)
+            const user = await api.createUser({
+              ...this.userForm,
+              roles: this.isAdmin ? ['user', 'admin'] : ['user']
+            })
             this.users.push(user)
             this.createMode = false
             ElNotification({
@@ -180,6 +193,13 @@ export default {
       this.editMode = true
     },
     async deleteUser(user) {
+      if (user.email === authStore.user.email) {
+        return ElNotification({
+          title: 'Error',
+          message: 'You cannot delete yourself',
+          type: 'error'
+        })
+      }
       // Find the index of the user in the users array
       ElMessageBox.confirm(
         `Are you sure you want to delete user (${user.firstName} ${user.lastName})?`,

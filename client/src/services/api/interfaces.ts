@@ -13,6 +13,7 @@ export type CreateUserDto = {
   password: string
   firstName: string
   lastName: string
+  roles?: ['user', 'admin']
 }
 
 export type UpdateUserDto = {
