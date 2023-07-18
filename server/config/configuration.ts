@@ -3,6 +3,8 @@ import { Configuration } from './types';
 export default (): Configuration => ({
   server: {
     port: parseInt(process.env.SERVER_PORT, 10) || 3000,
+    origins: process.env.SERVER_ORIGINS || 'http://localhost:5173',
+    methods: process.env.SERVER_METHODS,
   },
   db: {
     postgres: {

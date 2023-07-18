@@ -8,6 +8,7 @@ import { setupSwagger } from '../vendors/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  setupCors(app);
   configureApp(app);
   setupSwagger(app);
 
@@ -21,6 +22,18 @@ function configureApp(app) {
       whitelist: true,
     }),
   );
+}
+
+function setupCors(app) {
+  const configService = app.get(ConfigService);
+
+  const origins = configService.get('server.origins');
+  const methods = configService.get('server.methods');
+
+  app.enableCors({
+    origin: origins.split(','),
+    methods: methods.split(','),
+  });
 }
 
 async function startServer(app) {
