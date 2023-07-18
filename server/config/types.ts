@@ -1,6 +1,8 @@
 export type Configuration = {
   server: {
     port: number;
+    origins: string;
+    methods: string;
   };
   db: {
     postgres: {
