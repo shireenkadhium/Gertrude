@@ -16,8 +16,8 @@ export default {
   data() {
     return {
       form: {
-        email: 's.rykov@mobidev.biz',
-        password: 'Admin@123'
+        email: '',
+        password: ''
       },
       emailRules: [
         { required: true, message: 'Please enter your email', trigger: 'blur' },
