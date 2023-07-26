@@ -7,6 +7,7 @@ import { spawn } from 'child_process';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as process from 'process';
 import { SettingsService } from '../settings/settings.service';
 import { ERROR_MESSAGES } from './chats.constants';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,21 +43,20 @@ export class ChatsService {
 
     return new Promise((resolve, reject) => {
       const scriptPath = path.resolve(
-        __dirname,
-        '../..',
-        'indexes/scripts/create-index.py',
+        process.cwd(),
+        'llama-index/create-index.py',
       );
-      const process = spawn('python3', [scriptPath, OPENAI_API_KEY, id]);
+      const python = spawn('python3', [scriptPath, OPENAI_API_KEY, id]);
       let result = '';
-      process.stdout.on('data', (data) => {
+      python.stdout.on('data', (data) => {
         console.log(data.toString());
         result += data.toString();
       });
-      process.stderr.on('data', (data) => {
+      python.stderr.on('data', (data) => {
         console.log('errr', data.toString());
         result += data.toString();
       });
-      process.on('close', (code) => {
+      python.on('close', (code) => {
         if (code !== 0) {
           this.deleteIndex(index.id);
           return reject(
@@ -65,7 +65,7 @@ export class ChatsService {
         }
         resolve(index);
       });
-      process.on('error', (err) => {
+      python.on('error', (err) => {
         console.log(err.toString());
         reject(err);
       });
@@ -82,11 +82,10 @@ export class ChatsService {
 
     return new Promise((resolve, reject) => {
       const scriptPath = path.resolve(
-        __dirname,
-        '../..',
-        'indexes/scripts/query-index.py',
+        process.cwd(),
+        'llama-index/query-index.py',
       );
-      const process = spawn('python3', [
+      const python = spawn('python3', [
         scriptPath,
         OPENAI_API_KEY,
         prompt,
@@ -94,11 +93,11 @@ export class ChatsService {
       ]);
 
       let result = '';
-      process.stdout.on('data', (data) => {
+      python.stdout.on('data', (data) => {
         console.log(data.toString());
         result += data.toString();
       });
-      process.on('close', function (code) {
+      python.on('close', function (code) {
         if (code !== 0) {
           return reject(
             'Error querying documents. Most likely you have exceeded your openai quota and need to either upgrade subscription plan or change the API key',
@@ -106,7 +105,7 @@ export class ChatsService {
         }
         resolve(result);
       });
-      process.stdout.on('error', function (err) {
+      python.stdout.on('error', function (err) {
         console.log(err.toString());
         reject(err);
       });
