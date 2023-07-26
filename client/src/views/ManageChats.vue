@@ -37,7 +37,6 @@ export default {
     },
 
     validateFiles(rule, value, callback) {
-      console.log(value)
       if (value.length === 0) {
         callback(new Error('Please select a file'))
       } else {
@@ -47,7 +46,6 @@ export default {
 
     async submitForm() {
       this.$refs.documentsForm.validate(async (valid) => {
-        console.log(valid)
         if (valid) {
           this.filesUploading = true
           const formData = new FormData()
@@ -143,6 +141,7 @@ export default {
               class="file-uploader"
               drag
               multiple
+              accept=".docx,.xlsx,.pdf,.txt,.doc,.xls,.ppt,.pptx,.log,.json,.csv"
               action=""
               :disabled="filesUploading"
               :file-list="form.fileList"
@@ -155,7 +154,9 @@ export default {
               </el-icon>
               <div class="el-upload__text">Drop files here or <em>click to upload</em></div>
               <template #tip>
-                <div class="el-upload__tip">docx, xlsx, pdf, text files are supported</div>
+                <div class="el-upload__tip">
+                  Supported formats: .docx .xlsx .pdf .txt .doc .xls .ppt .pptx .log .json .csv
+                </div>
               </template>
             </el-upload>
           </el-form-item>

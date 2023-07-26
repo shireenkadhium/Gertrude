@@ -1,6 +1,8 @@
 <script>
 import { Delete } from '@element-plus/icons-vue'
 import api from '@/services/api'
+import { ElNotification } from 'element-plus'
+
 export default {
   components: {
     Delete
@@ -8,9 +10,10 @@ export default {
   data() {
     return {
       currentKey: '',
-      formData: {
+      form: {
         apiKey: ''
-      }
+      },
+      settingsRules: [{ required: true, message: 'Please enter API key', trigger: 'blur' }]
     }
   },
   mounted() {
@@ -18,17 +21,30 @@ export default {
   },
   methods: {
     async submitForm() {
-      this.currentKey = this.formData.apiKey
-      this.formData = {
-        apiKey: ''
-      }
-      await api.setApiKey({ value: this.currentKey })
+      this.$refs.settingsForm.validate(async (valid) => {
+        if (valid) {
+          try {
+            this.currentKey = this.form.apiKey
+            this.form = {
+              apiKey: ''
+            }
+            await api.setApiKey({ value: this.currentKey })
+          } catch (err) {
+            console.log(err)
+            ElNotification({
+              title: 'Error',
+              message: 'Error setting API key',
+              type: 'error'
+            })
+          }
+        }
+      })
     },
     async getData() {
       try {
         const { value } = await api.getApiKey()
         this.currentKey = value
-        this.formData.apiKey = value
+        this.form.apiKey = value
       } catch (err) {
         console.log(err)
       }
@@ -37,7 +53,7 @@ export default {
       try {
         await api.deleteApiKey()
         this.currentKey = ''
-        this.formData.apiKey = ''
+        this.form.apiKey = ''
       } catch (err) {
         console.log(err)
       }
@@ -54,19 +70,22 @@ export default {
       <div class="key">
         <strong>{{ currentKey }}</strong>
         <el-button type="danger" @click.prevent="deleteExistingKey">
-          <el-icon><delete /></el-icon>
+          <el-icon>
+            <delete />
+          </el-icon>
           <span>Delete</span>
         </el-button>
       </div>
     </div>
     <el-form
       v-if="!currentKey"
-      :model="formData"
+      ref="settingsForm"
+      :model="form"
       @submit.native.prevent="submitForm"
       label-position="top"
     >
-      <el-form-item label="New OpenApi Key">
-        <el-input v-model="formData.apiKey" placeholder="Enter openapi key"></el-input>
+      <el-form-item prop="apiKey" label="New OpenApi Key" :rules="settingsRules">
+        <el-input v-model="form.apiKey" placeholder="Enter openapi key"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" native-type="submit">Submit</el-button>
