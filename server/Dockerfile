@@ -14,4 +14,3 @@ COPY --from=prebuild /usr/src/app/dist ./dist
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r /usr/src/app/llama-index/requirements.txt
 CMD ["npm", "run", "start:prod"]
-

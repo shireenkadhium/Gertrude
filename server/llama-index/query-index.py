@@ -8,7 +8,12 @@ index_name = args[3]
 import os
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-from llama_index import GPTSimpleVectorIndex
+from llama_index import StorageContext, load_index_from_storage
 
-index = GPTSimpleVectorIndex.load_from_disk('assets/indexes/' + index_name + '.json')
-print(index.query(prompt))
+# rebuild storage context
+storage_context = StorageContext.from_defaults(persist_dir='./storage')
+# load index
+index = load_index_from_storage(storage_context)
+query_engine = index.as_query_engine()
+
+print(query_engine.query(prompt))

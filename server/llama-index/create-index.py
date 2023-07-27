@@ -7,8 +7,7 @@ index_name = args[2]
 import os
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-from llama_index import GPTSimpleVectorIndex, SimpleDirectoryReader
+from llama_index import VectorStoreIndex, SimpleDirectoryReader
 documents = SimpleDirectoryReader('assets/temp').load_data()
-index = GPTSimpleVectorIndex.from_documents(documents)
-
-index.save_to_disk('assets/indexes/' + index_name + '.json')
+index = VectorStoreIndex.from_documents(documents)
+index.storage_context.persist()
