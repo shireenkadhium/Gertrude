@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsOptional, IsString } from 'class-validator';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { PASSWORD_SALT_ROUNDS } from '../../auth/auth.constants';
 

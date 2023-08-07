@@ -15,7 +15,7 @@ push-client:
 	docker push ${IMAGECLIENTFULLNAME}
 
 build-server:
-	cd server && docker build -t ${IMAGESERVERFULLNAME} .
+	cd server && docker build --platform linux/amd64 -t ${IMAGESERVERFULLNAME} .
 
 push-server:
 	make ecr-login

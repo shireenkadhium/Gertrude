@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { PASSWORD_SALT_ROUNDS } from '../src/auth/auth.constants';
 
 const { SYSTEM_USER, SYSTEM_USER_PASSWORD } = process.env;
