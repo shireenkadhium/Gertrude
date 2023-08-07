@@ -23,4 +23,4 @@ push-server:
 
 deploy:
 	scp docker-stack.yml GertrudeProduction:/var/www/gertrude/
-	ssh GertrudeProduction  "sudo $(aws ecr get-login --no-include-email --registry-ids 425277199765 --region us-west-1) && docker stack deploy --with-registry-auth  --compose-file /var/www/gertrude/docker-stack.yml gertrude"
+	ssh GertrudeProduction  "aws ecr get-login --no-include-email --registry-ids 425277199765 --region us-west-1 && docker stack deploy --with-registry-auth  --compose-file /var/www/gertrude/docker-stack.yml gertrude"

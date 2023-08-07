@@ -5,75 +5,74 @@ x-db-settings: &db-settings
   POSTGRES_PASSWORD_FILE: '/run/secrets/postgres_db_password'
 
 services:
-    client:
-      image: 425277199765.dkr.ecr.us-west-1.amazonaws.com/gertrude:client
-      ports:
-          - "8080:80"
-      networks:
-          - appnet
-      deploy:
-        mode: replicated
-        replicas: 1
-        update_config:
-          parallelism: 0
-          delay: 0s
-        restart_policy:
-          condition: any
+  client:
+    image: 425277199765.dkr.ecr.us-west-1.amazonaws.com/gertrude:client
+    ports:
+      - "8080:80"
+    networks:
+      - appnet
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 0
+        delay: 0s
+      restart_policy:
+        condition: any
 
-    server:
-      image: 425277199765.dkr.ecr.us-west-1.amazonaws.com/gertrude:server
-      env_file:
-        - .env
-      command: 'npm run migration:run'
-      ports:
-        - "3000:3000"
-      networks:
-          - appnet
-      depends_on:
-           - postgres
-      deploy:
-        mode: replicated
-        replicas: 1
-        update_config:
-          parallelism: 0
-          delay: 0s
-        restart_policy:
-          condition: any
-    postgres:
-      image: postgres:15.3-alpine3.18
-      environment:
-        <<:
-          - *db-settings
-      volumes:
-        - "pgdata:/var/lib/postgresql/data"
-      secrets:
-        - postgres_db_name
-        - postgres_db_user
-        - postgres_db_password
-      networks:
-        - appnet
-      deploy:
-        mode: replicated
-        replicas: 1
-        update_config:
-          parallelism: 0
-          delay: 0s
-        restart_policy:
-          condition: any
-    adminer:
-        image: adminer
-        networks:
-          - appnet
-        ports:
-          - "8085:8080"
-        deploy:
-          mode: replicated
-          replicas: 1
-          update_config:
-            parallelism: 0
-            delay: 0s
-          restart_policy:
-            condition: any
+  server:
+    image: 425277199765.dkr.ecr.us-west-1.amazonaws.com/gertrude:server
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - appnet
+    depends_on:
+      - postgres
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 0
+        delay: 0s
+      restart_policy:
+        condition: any
+  postgres:
+    image: postgres:15.3-alpine3.18
+    environment:
+      <<:
+        - *db-settings
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    secrets:
+      - postgres_db_name
+      - postgres_db_user
+      - postgres_db_password
+    networks:
+      - appnet
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 0
+        delay: 0s
+      restart_policy:
+        condition: any
+  adminer:
+    image: adminer
+    networks:
+      - appnet
+    ports:
+      - "8085:8080"
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 0
+        delay: 0s
+      restart_policy:
+        condition: any
 
 networks:
   appnet:
