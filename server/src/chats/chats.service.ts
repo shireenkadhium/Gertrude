@@ -57,8 +57,9 @@ export class ChatsService {
         result += data.toString();
       });
       python.on('close', (code) => {
+        console.log(code);
         if (code !== 0) {
-          this.deleteIndex(index.id);
+          // this.deleteIndex(index.id);
           return reject(
             'Error creating chat. Most likely you have exceeded your openai quota and need to upgrade subscription plan or change the API key',
           );
@@ -149,12 +150,6 @@ export class ChatsService {
   }
 
   deleteIndex(id: string) {
-    try {
-      const filePath = `assets/indexes/${id}.json`;
-      fs.unlinkSync(filePath);
-    } catch (err) {
-      console.log(err);
-    }
     return this.indexRepository.delete(id);
   }
 

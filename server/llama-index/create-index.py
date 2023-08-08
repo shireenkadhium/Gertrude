@@ -8,6 +8,9 @@ import os
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 from llama_index import VectorStoreIndex, SimpleDirectoryReader
+
 documents = SimpleDirectoryReader('assets/temp').load_data()
+
 index = VectorStoreIndex.from_documents(documents)
-index.storage_context.persist()
+index.set_index_id(index_name)
+index.storage_context.persist(persist_dir='./storage')
