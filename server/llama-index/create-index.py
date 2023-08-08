@@ -13,4 +13,4 @@ documents = SimpleDirectoryReader('assets/temp').load_data()
 
 index = VectorStoreIndex.from_documents(documents)
 index.set_index_id(index_name)
-index.storage_context.persist(persist_dir='./storage')
+index.storage_context.persist(persist_dir=f'./storage/{index_name}')

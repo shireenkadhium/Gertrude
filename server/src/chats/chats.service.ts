@@ -150,6 +150,12 @@ export class ChatsService {
   }
 
   deleteIndex(id: string) {
+    try {
+      const dir = `storage/${id}`;
+      fs.rmSync(dir, { recursive: true, force: true });
+    } catch (err) {
+      console.log(err);
+    }
     return this.indexRepository.delete(id);
   }
 
